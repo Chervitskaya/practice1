@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/css/master.css" type="text/css">
+    <script src="app.vue"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+
+<form id="app" :class="`state-${user}`" @submit="checkForm" method="post" novalidate="true">
+
+    <p v-if="errors.length">
+        <b>Будь-ласка виправте помилку(-ки):</b>
+    <ul>
+        <li v-for="error in errors">{{ error }}</li>
+    </ul>
+    </p>
+
+    <p>
+        <label for="name">Ім'я</label>
+            <input type="text" name="name" id="name" v-model="name">
+    </p>
+
+    <p>
+        <label for="surname">Прізвище</label>
+            <input type="text" name="surname" id="surname" v-model="surname">
+    </p>
+
+    <div id="sex" class="demo">
+        <label for="sex">Стать</label>
+        <input type="radio" id="man" value="Male" v-model="user">
+    <label for="man">Чоловіча</label>
+
+    <input type="radio" id="woman" value="Female" v-model="user">
+    <label for="woman">Жіноча</label>
+    </div>
+    <p>
+        <label for="phone">Телефон</label>
+            <input type="text" placeholder="+380" name="phone" id="phone" v-model="phone" maxlength="13" minlength="13">
+    </p>
+
+    <p>
+        <label for="username">Нік</label>
+        <input type="text" name="username" id="username" v-model="username">
+    </p>
+
+    <p>
+        <input type="submit" value="Відправити">
+    </p>
+</form>
+</body>
+<script type="text/javascript">
+    const app = new Vue({
+        el:'#app',
+        data:{
+            errors:[],
+            name:null,
+            surname:null,
+            phone:null,
+            username:null,
+            user:null,
+        },
+        methods:{
+            checkForm:function(e) {
+                this.errors = [];
+                if(!this.name) this.errors.push("Заповніть поле Ім'я");
+                if(!this.surname) this.errors.push("Заповніть поле Прізвище");
+                if(!this.phone) {
+                    this.errors.push("Заповніть поле Телефон");
+                } else if(!this.validPhone(this.phone)) {
+                    this.errors.push("Поле Телефон заповнено не правильно. Повинно мати такий вигляд: +380900000000");
+                }
+                if(!this.username) {
+                    this.errors.push("Заповніть поле Нік");
+                } else if(!this.validUsername(this.username)){
+                    this.errors.push("Нік має містити одну велику літеру, знак підкреслення, і 3 цифри наприкінці")
+                }
+                var app = new Vue({
+                    el: '#sex',
+                    data: {
+                        user: ''
+                    },
+                })
+                if(!this.errors.length) return true;
+                e.preventDefault();
+            },
+            validPhone:function(phone) {
+                const re = /[\+0-9]{13}$/ig;
+                return re.test(phone);
+            },
+            validUsername:function(username) {
+                const regex =/^[A-Za-z0-9]+_+[A-Za-z]+[0-9]{3}$/ig;
+                if (!regex.test(username)) {
+                    return false;
+                }
+            }
+        }
+    })
+</script>
+<style>
+    input,select {
+    margin-left: 10px;
+    }
+    ul li, p b{
+        color: red;
+    }
+    .state-Male{
+        background: lightblue;
+    }
+    .state-Female{
+        background: lightpink;
+    }
+</style>
+</html>
